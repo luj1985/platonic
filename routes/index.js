@@ -21,12 +21,11 @@ router.get('/', function(req, res, next) {
 const HOD_URL = 'https://api.havenondemand.com/1/api/sync/detectfaces/v1';
 
 router.post('/detect-face', function(req, res, next) {
-  const publicRoot = url.resolve(__dirname, '/public');
   const formData = {
     apikey : SECRET_KEY,
     additional : 'true',
     face_orientation : 'any',
-    file : fs.createReadStream(publicRoot + req.body.url)
+    file : fs.createReadStream(__dirname + '/../public' + req.body.url)
   };
 
   //----------------------------------------------------------------

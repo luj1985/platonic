@@ -3,17 +3,20 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+@width: 600px;
+@ratio: 3820 / 2964;
+
 .panzoom-parent {
-  box-sizing: border-box;
+  box-sizing: content-box;
   border: 2px solid #333;
   display: inline-block;
-  width: 600px; 
-  height: 400px; 
+  width: @width; 
+  height: ceil(@width/@ratio);
 }
 
 #inverted-contain .panzoom { 
-  width: 600px; 
-  height: 400px; 
+  width: @width; 
+  height: ceil(@width/@ratio);
 }
 
 .inner {
@@ -25,4 +28,14 @@ body {
   background-color: red;
   position: absolute;
   top: 50px;
+}
+
+#resume {
+  width : 250px;
+  height: 350px;
+  padding: 14px;
+  display: none;
+  background-color: #CCC;
+  opacity: .8;
+  word-break: break-word;
 }
