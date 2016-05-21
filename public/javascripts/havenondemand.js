@@ -1,5 +1,20 @@
 $(function() {
-  var $workspace = $('img#workspace');
+  const IMAGE_POSITION = "/images/Sanzio_01.jpg",
+        FACE_RECTANGLE_LINE_WIDTH = 3.0,
+        FACE_RECTANGLE_LINE_COLOR = 'red';
+
+  var canvas = document.getElementById('workspace');
+  var ctx = canvas.getContext('2d');
+
+  var image = new Image(); 
+  image.onload = function() {
+    canvas.width = image.width;
+    canvas.height = image.height;
+    ctx.drawImage(image, 0, 0);
+    return canvas;
+  }
+
+  image.src = IMAGE_POSITION;
 
   var $section = $('#inverted-contain');
   $section.find('.panzoom').panzoom({
@@ -13,11 +28,28 @@ $(function() {
     contain: 'invert'
   }).panzoom('zoom');
 
+
+  function drawFaceRectangles(data) {
+    ctx.save(); 
+    
+    ctx.lineWidth = FACE_RECTANGLE_LINE_WIDTH; 
+    ctx.strokeStyle = FACE_RECTANGLE_LINE_COLOR;
+
+    var faces = data.face;
+    faces.forEach(function(face) {
+      var others = face.additional_information; // { age: "adult"}
+      ctx.strokeRect(face.left, face.top, face.width, face.height); 
+    });
+    
+    ctx.restore(); 
+  }
+
+
+  // in fact we can send image directly from client if CORS was disabled.
   $('#detect').on('click', function() {
-    var src = $workspace.attr('src');
-    $.post('/detect-face', { url : src }).then(function(data) {
-      console.log(data);
-    }).fail(function(err) {
+    $.post('/detect-face', { url : IMAGE_POSITION })
+    .then(drawFaceRectangles)
+    .fail(function(err) {
       // alert(err.statusText);
 
     });
