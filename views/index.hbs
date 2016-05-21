@@ -1,6 +1,14 @@
 <h1>{{title}}</h1>
-<img id="workspace" src="/images/Sanzio_01.jpg">
 
-<div class="actions">
-  <button id="detect">Detect Faces</button>
-</div>
+<main>
+<section id="inverted-contain">
+  <div class="panzoom-parent">
+  <img class="panzoom" id="workspace" src="/images/Sanzio_01.jpg" width="600">
+  </div>
+  <div class="buttons">
+    <button id="detect">Detect Faces</button>
+    <input type="range" class="zoom-range">
+    <button class="reset">Reset</button>
+  </div>
+</section>
+</main>
