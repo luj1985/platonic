@@ -88,9 +88,23 @@ $(function() {
       });
 
       var img = cropFaceAndDisplayOnResumePanel(face);
-      // TODO: send image to backend, and get back the descriptions.
-      $resume.find('.description')
-             .text(JSON.stringify(face, null, 2));
+      var base64Img = img.split('base64,')[1];
+
+      var description = $resume.find('.description');
+      description.html('<strong>Loading...</strong>');
+      $.post('/image-identify', { bimg: base64Img }, function(data) {
+        // description.text(data);
+        var wiki = JSON.parse(data);
+        var pages = wiki.query.pages;
+        var pageid = Object.keys(pages)[0];
+        if (pageid) {
+          var page = pages[pageid].extract;
+          // send image to backend, and get back the description.
+          description.html(page);
+        } else {
+          description.html('<h3>No wiki found</h3>');
+        }
+      });
       $resume.show();
     }
 

@@ -14,13 +14,13 @@ if (!SECRET_KEY) {
 // const havenondemand = require('havenondemand');
 // const client = new havenondemand.HODClient(SECRET_KEY);
 
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
   res.render('index', { title: 'Platonic Academic' });
 });
 
-const HOD_URL = 'https://api.havenondemand.com/1/api/sync/detectfaces/v1';
+const HOD_DETECTFACE_URL = 'https://api.havenondemand.com/1/api/sync/detectfaces/v1';
 
-router.post('/detect-face', function(req, res, next) {
+router.post('/detect-face', (req, res, next) => {
   const formData = {
     apikey : SECRET_KEY,
     additional : 'true',
@@ -34,7 +34,7 @@ router.post('/detect-face', function(req, res, next) {
   // result directly.
   //----------------------------------------------------------------
   //
-  // request.post({ url: HOD_URL, formData : formData }, function(err, resp, body) {
+  // request.post({ url: HOD_DETECTFACE_URL, formData : formData }, function(err, resp, body) {
   //   if (err) {
   //     return console.error('upload failed:', err);
   //   }
@@ -43,6 +43,43 @@ router.post('/detect-face', function(req, res, next) {
   // });
   //
   res.send(mock.DETECT_FACE_RESP);
+});
+
+
+const HOD_ENTITYEXTRACT_URL = 'https://api.havenondemand.com/1/api/sync/extractentities/v2';
+
+router.post('/image-identify', (req, res, next) => {
+  var img = req.params.bimg;
+
+  // TODO: send this image to IDOL and get the name;
+  var name = "Plato";
+
+  request.get({
+    url: 'https://en.wikipedia.org/w/api.php', 
+    qs: { 
+      format : "json",
+      action : "query",
+      prop : "extracts",
+      exsentences : 2,  // wikipage sometimes is quite large ...
+      titles : name
+    }
+  }, (err, resp, body) => {
+    res.send(body);
+
+
+
+    // XXX: use IDOL On Demand to extract wiki entity
+    // request.post({ 
+    //   url : HOD_ENTITYEXTRACT_URL, form: {
+    //     apikey : SECRET_KEY,
+    //     additional : 'true',
+    //     text : body,
+    //     entity_type : 'people_eng'
+    //   }
+    // }, (err, resp, body) => {
+    //   res.send(body);
+    // })
+  });
 });
 
 module.exports = router;
