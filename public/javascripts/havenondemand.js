@@ -15,17 +15,17 @@ $(function() {
     console.log(`scale ${canvas_scale}`);
   }
 
-  var image = new Image(); 
-  image.onload = function() {
-    canvas.width = image.width;
-    canvas.height = image.height;
-    ctx.drawImage(image, 0, 0);
+  var platonic = new Image(); 
+  platonic.onload = function() {
+    canvas.width = platonic.width;
+    canvas.height = platonic.height;
+    ctx.drawImage(platonic, 0, 0);
 
     recaculateScale(canvas);
     return canvas;
   }
 
-  image.src = IMAGE_POSITION;
+  platonic.src = IMAGE_POSITION;
 
   var $section = $('#inverted-contain');
   var pz = $section.find('.panzoom').panzoom({
@@ -52,6 +52,20 @@ $(function() {
 
   var $resume = $('#resume');
 
+  var hovered_face = null;
+
+
+  var head = document.getElementById('face');
+  var headCtx = head.getContext('2d');
+
+  function cropFaceAndDisplayOnResumePanel(face) {
+    var l = face.left, t = face.top, w = face.width, h = face.height;
+    head.width = w;
+    head.height = h;
+    headCtx.drawImage(platonic, l, t, w, h, 0, 0, w, h);
+    return head.toDataURL();
+  }
+
   $(canvas).mousemove(function(evt) {
     var offset = $(this).offset();
     var point = {
@@ -62,16 +76,25 @@ $(function() {
     var face = faces_in_canvas.find(f => isHover(f, point));
   
     if (!face) {
+      hovered_face = null;
       return $resume.hide();
     } 
 
-    $resume.css({
-      position: 'absolute',
-      left: evt.pageX + 5,
-      top: evt.pageY + 5
-    });
-    $resume.text(JSON.stringify(face, null, 2));
-    $resume.show();
+    if (hovered_face !== face) {
+      $resume.css({
+        position: 'absolute',
+        left: evt.pageX + 5,
+        top: evt.pageY + 5
+      });
+
+      var img = cropFaceAndDisplayOnResumePanel(face);
+      // TODO: send image to backend, and get back the descriptions.
+      $resume.find('.description')
+             .text(JSON.stringify(face, null, 2));
+      $resume.show();
+    }
+
+    hovered_face = face;
   });
 
 
